@@ -1,0 +1,199 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// enum Role {
+//   super_admin
+//   admin
+//   user
+// }
+
+
+// model User {
+//   id            String    @id @default(uuid())
+//   name          String
+//   email         String    @unique
+//   emailVerified DateTime?
+//   password      String
+//   role          Role      @default(user)
+//   image         String?
+//   createdAt     DateTime  @default(now())
+//   updatedAt     DateTime  @updatedAt
+//   //Relations and Indexes
+
+// }
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // o mysql, según tu motor
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now())
+  locations  Location[]
+  events     Event[]
+
+  Users UserOrganization[]
+}
+
+enum Plan {
+  FREE
+  COMMUNITY
+  MISSION
+}
+
+enum Role {
+  super_admin
+  admin
+  user
+}
+
+model User {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  password        String
+  isSuperAdmin    Boolean  @default(false)
+  role            Role      @default(user)
+  
+  permissions     UserEventPermission[]
+  organizations   UserOrganization[]
+}
+
+model UserOrganization {
+  userId         String
+  organizationId String
+  role           Role                 @default(user) // rol dentro de esa organización
+
+  user           User                 @relation(fields: [userId], references: [id])
+  organization   Organization         @relation(fields: [organizationId], references: [id])
+
+  @@id([userId, organizationId])
+}
+
+model Location {
+  id              String   @id @default(uuid())
+  name            String
+  address         String?
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  events          Event[]
+}
+
+model Event {
+  id             String   @id @default(uuid())
+  name           String
+  description    String?
+  startDate      DateTime
+  endDate        DateTime
+  locationId     String
+  organizationId String
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  location       Location     @relation(fields: [locationId], references: [id])
+
+  participantRoles ParticipantRole[]
+  registrations    EventRegistration[]
+  permissions      UserEventPermission[]
+}
+
+model ParticipantRole {
+  id        String   @id @default(uuid())
+  name      String
+  eventId   String
+  event     Event @relation(fields: [eventId], references: [id])
+
+  registrations EventRegistration[]
+}
+
+model Person {
+  id          String   @id @default(uuid())
+  fullName    String
+  email       String?
+  phone       String?
+  gender      Gender?
+  birthdate   DateTime
+  registrations EventRegistration[]
+
+  FromPersonRelationship PersonRelationship[] @relation("FromPerson")
+
+  ToPersonRelationship PersonRelationship[] @relation("ToPerson")
+}
+
+enum Gender {
+  MASCULINO
+  FEMENINO
+  SIN_ESPECIFICAR
+}
+
+model EventRegistration {
+  id         String   @id @default(uuid())
+  personId   String
+  eventId    String
+  roleId     String?
+
+  person     Person          @relation(fields: [personId], references: [id])
+  event      Event           @relation(fields: [eventId], references: [id])
+  role       ParticipantRole? @relation(fields: [roleId], references: [id])
+
+  hasPaid    Boolean  @default(false)
+  amountPaid Float    @default(0)
+  totalCost  Float?
+
+  createdAt  DateTime @default(now())
+}
+
+model UserEventPermission {
+  id         String   @id @default(uuid())
+  userId     String
+  eventId    String
+  permission RolePermission
+
+  user       User  @relation(fields: [userId], references: [id])
+  event      Event @relation(fields: [eventId], references: [id])
+}
+
+enum RolePermission {
+  ADMIN      // Puede editar todo del evento
+  REGISTRAR  // Solo puede registrar personas
+  TREASURER  // Solo puede registrar pagos
+}
+
+model RelationshipKind {
+  id   String  @id @default(uuid())
+  name String  @unique
+  description String?
+
+  relationships PersonRelationship[]
+}
+
+model PersonRelationship {
+  id             String          @id @default(uuid())
+  fromPerson     Person          @relation("FromPerson", fields: [fromPersonId], references: [id])
+  fromPersonId   String
+
+  toPerson       Person          @relation("ToPerson", fields: [toPersonId], references: [id])
+  toPersonId     String
+
+  relationshipKind RelationshipKind @relation(fields: [relationshipKindId], references: [id])
+  relationshipKindId String
+
+  note           String?
+}
