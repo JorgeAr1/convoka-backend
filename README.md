@@ -116,7 +116,7 @@ Convoka está diseñado para escalar con distintos planes:
 
 ## 🙌 Créditos
 
-Desarrollado con ❤️ por [Tu Nombre o Ministerio].
+Desarrollado con ❤️ por Jorge Luis Arreygue Avila.
 
 ---
 
