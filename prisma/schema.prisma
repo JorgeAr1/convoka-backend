@@ -222,7 +222,8 @@ model OrganizationInvitation {
   organizationId  String
   invitedBy       User   @relation("InvitationsSent", fields: [invitedById], references: [id])
   invitedById     String
-  accepted        Boolean  @default(false)
+  role            Role  @default(user)
+  status          InvitationStatus @default(PENDING)
   createdAt       DateTime @default(now())
   acceptedAt      DateTime?
 
@@ -234,4 +235,5 @@ enum InvitationStatus {
   ACCEPTED
   DECLINED
   EXPIRED
+  REVOKED
 }

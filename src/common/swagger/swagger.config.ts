@@ -30,7 +30,7 @@ const customfavIcon = "https://res.cloudinary.com/dphleqb5t/image/upload/v171372
 //     }
 // `
 
-const customSiteTitle = "{jc-develop Auth API-REST}";   //add site title to swagger for nice SEO
+const customSiteTitle = "Convoka App REST API Documentation";   //add site title to swagger for nice SEO
 
 const customJs = "script url";                  //uncomment this line to add a custom script file
 const customJsStr = "alert('prueba')";          //uncomment this line to add a custom script

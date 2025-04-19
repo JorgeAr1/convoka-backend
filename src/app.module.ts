@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { OrganizationModule } from './organization/organization.module';
+import { InvitationModule } from './invitation/invitation.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { OrganizationModule } from './organization/organization.module';
     AuthModule,
     PrismaModule,
     UserModule,
-    OrganizationModule
+    OrganizationModule,
+    InvitationModule
   ],
   controllers: [AppController],
   providers: [AppService],

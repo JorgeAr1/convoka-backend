@@ -51,6 +51,43 @@ export class AuthService {
         }
       });
 
+      const pendingInvitations = await this.prisma.organizationInvitation.findMany({
+        where: {
+          email: newuser.email,
+          status: 'PENDING',
+          // expiresAt: {
+          //   gte: new Date(),
+          // },
+        },
+      });
+      
+      for (const invitation of pendingInvitations) {
+        await this.prisma.userOrganization.create({
+          data: {
+            userId: newuser.id,
+            organizationId: invitation.organizationId,
+            role: invitation.role,
+          },
+        });
+      
+        await this.prisma.organizationInvitation.update({
+          where: { id: invitation.id },
+          data: {
+            status: 'ACCEPTED',
+            acceptedAt: new Date(),
+          },
+        });
+
+        await this.prisma.userOrganization.create({
+          data: {
+            userId: newuser.id,
+            organizationId: invitation.organizationId,
+            role: invitation.role, // <-- Asegúrate de que esto venga bien desde la invitación
+          },
+        });
+        console.log(`Invitation accepted for user ${newuser.id} and organization ${invitation.organizationId}`);
+      }
+      
       return {
         user: newuser,
         token: this.getJwtToken({
