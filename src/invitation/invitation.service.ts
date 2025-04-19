@@ -38,4 +38,18 @@ export class InvitationService {
       },
     });
   }
+
+  async listByOrganization(organizationId: string) {
+    const invitations = await this.prisma.organizationInvitation.findMany({
+      where: { organizationId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        invitedBy: {
+          select: { id: true, name: true, email: true }
+        }
+      }
+    });
+  
+    return invitations;
+  }  
 }
