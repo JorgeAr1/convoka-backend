@@ -55,9 +55,9 @@ export class AuthService {
         where: {
           email: newuser.email,
           status: 'PENDING',
-          // expiresAt: {
-          //   gte: new Date(),
-          // },
+          expiresAt: {
+            gte: new Date(),
+          },
         },
       });
       
