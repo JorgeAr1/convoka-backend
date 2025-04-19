@@ -7,7 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { OrganizationModule } from './organization/organization.module';
 import { InvitationModule } from './invitation/invitation.module';
-
+import { EventModule }  from './event/event.module';
 import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
@@ -17,7 +17,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     PrismaModule,
     UserModule,
     OrganizationModule,
-    InvitationModule
+    InvitationModule,
+    EventModule
   ],
   controllers: [AppController],
   providers: [AppService],
