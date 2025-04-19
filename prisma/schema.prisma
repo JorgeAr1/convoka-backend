@@ -226,6 +226,8 @@ model OrganizationInvitation {
   status          InvitationStatus @default(PENDING)
   createdAt       DateTime @default(now())
   acceptedAt      DateTime?
+  expiresAt       DateTime? 
+
 
   @@unique([email, organizationId])
 }

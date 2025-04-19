@@ -1,6 +1,7 @@
-import { IsEmail, IsNotEmpty, IsUUID,IsEnum } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsUUID,IsEnum, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { Type } from 'class-transformer';
 export class CreateInvitationDto {
   @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
@@ -14,4 +15,8 @@ export class CreateInvitationDto {
   @IsNotEmpty()
   @IsEnum(Role)
   role: Role;
+
+  @IsOptional()
+  @Type(() => Date)
+  expiresAt?: Date;
 }

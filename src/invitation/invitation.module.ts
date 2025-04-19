@@ -3,10 +3,10 @@ import { InvitationController } from './invitation.controller';
 import { InvitationService } from './invitation.service';
 import { PrismaModule } from '../prisma/prisma.module';  
 import { UserModule } from 'src/user/user.module'; 
-
+import { InvitationCronService } from './invitation-cron.service';
 @Module({
   imports: [UserModule, PrismaModule],  // Si necesitas el módulo de usuarios
   controllers: [InvitationController],
-  providers: [InvitationService],
+  providers: [InvitationService, InvitationCronService],
 })
 export class InvitationModule {}
