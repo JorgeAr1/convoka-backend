@@ -1,8 +1,8 @@
 {
   "name": "nest-prisma-postgres-auth-api",
   "version": "0.0.1",
-  "description": "Sample API for NestJS + Prisma + Postgres with Auth options",
-  "author": "{jc-develop}",
+  "description": "API FOR CONVOKA APP",
+  "author": "J. ARREYGUE",
   "private": true,
   "license": "MIT",
   "scripts": {

@@ -51,6 +51,8 @@ model Organization {
   events     Event[]
 
   Users UserOrganization[]
+
+  OrganizationInvitation OrganizationInvitation[]
 }
 
 enum Plan {
@@ -75,6 +77,8 @@ model User {
   
   permissions     UserEventPermission[]
   organizations   UserOrganization[]
+
+  OrganizationInvitation OrganizationInvitation[] @relation("InvitationsSent")
 }
 
 model UserOrganization {
@@ -196,4 +200,38 @@ model PersonRelationship {
   relationshipKindId String
 
   note           String?
+}
+
+// model OrganizationInvitation {
+//   id              String   @id @default(cuid())
+//   email           String
+//   organizationId  String
+//   role            Role  @default(user)
+//   invitedById     String?   // quién hizo la invitación (opcional)
+//   invitedBy       User?     @relation("InvitationsSent", fields: [invitedById], references: [id])
+//   organization    Organization @relation(fields: [organizationId], references: [id])
+//   createdAt       DateTime @default(now())
+//   acceptedAt      DateTime?
+//   status          InvitationStatus @default(PENDING)
+// }
+
+model OrganizationInvitation {
+  id              String   @id @default(uuid())
+  email           String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  organizationId  String
+  invitedBy       User   @relation("InvitationsSent", fields: [invitedById], references: [id])
+  invitedById     String
+  accepted        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  acceptedAt      DateTime?
+
+  @@unique([email, organizationId])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
 }
