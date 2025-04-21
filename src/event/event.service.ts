@@ -8,12 +8,37 @@ export class EventService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createEventDto: CreateEventDto) {
+    const {
+      locationId,
+      locationDescription,
+      locationAddress,
+      organizationId,
+      ...rest
+    } = createEventDto;
+  
     return this.prisma.event.create({
       data: {
-        ...createEventDto,
+        ...rest,
+        organization: {
+          connect: { id: organizationId },
+        },
+        location: locationId
+          ? { connect: { id: locationId } }
+          : locationDescription
+          ? {
+              create: {
+                name: locationDescription,
+                address: locationAddress || null,
+                organization: {
+                  connect: { id: organizationId },
+                },
+              },
+            }
+          : undefined,
       },
     });
-  }
+  }  
+  
 
   async findAll() {
     return this.prisma.event.findMany({
@@ -41,13 +66,37 @@ export class EventService {
   }
 
   async update(id: string, updateEventDto: UpdateEventDto) {
+    const {
+      locationId,
+      locationDescription,
+      locationAddress,
+      organizationId,
+      ...rest
+    } = updateEventDto;
+  
     return this.prisma.event.update({
       where: { id },
       data: {
-        ...updateEventDto,
+        ...rest,
+        organization: organizationId
+          ? { connect: { id: organizationId } }
+          : undefined,
+        location: locationId
+          ? { connect: { id: locationId } }
+          : locationDescription
+          ? {
+              create: {
+                name: locationDescription,
+                address: locationAddress || null,
+                organization: {
+                  connect: { id: organizationId },
+                },
+              },
+            }
+          : undefined,
       },
     });
-  }
+  }  
 
   async remove(id: string) {
     return this.prisma.event.delete({
