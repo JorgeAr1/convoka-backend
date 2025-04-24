@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
+import { PassportModule } from '@nestjs/passport';
+
 import { Role } from '@prisma/client';
 
 const role: Role = 'user';

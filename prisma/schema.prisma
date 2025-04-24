@@ -107,11 +107,11 @@ model Event {
   description    String?
   startDate      DateTime
   endDate        DateTime
-  locationId     String
+  locationId     String?
   organizationId String
 
   organization   Organization @relation(fields: [organizationId], references: [id])
-  location       Location     @relation(fields: [locationId], references: [id])
+  location       Location?     @relation(fields: [locationId], references: [id])
 
   participantRoles ParticipantRole[]
   registrations    EventRegistration[]

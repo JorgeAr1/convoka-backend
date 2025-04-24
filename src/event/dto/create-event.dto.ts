@@ -22,7 +22,7 @@ export class CreateEventDto {
   @IsOptional()
   @IsString()
   @ValidateIf((o) => !o.locationDescription)
-  locationId: string;
+  locationId?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
