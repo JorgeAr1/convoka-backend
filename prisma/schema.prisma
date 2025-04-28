@@ -116,6 +116,8 @@ model Event {
   participantRoles ParticipantRole[]
   registrations    EventRegistration[]
   permissions      UserEventPermission[]
+
+  EventPersonFieldRequirement EventPersonFieldRequirement[]
 }
 
 model ParticipantRole {
@@ -128,12 +130,30 @@ model ParticipantRole {
 }
 
 model Person {
-  id          String   @id @default(uuid())
-  fullName    String
-  email       String?
-  phone       String?
-  gender      Gender?
-  birthdate   DateTime
+  id           String   @id @default(cuid())
+  firstName    String
+  lastName     String?
+  middleName   String?
+  email        String?  @unique
+  phone        String?  @unique
+  gender       String?  // Male, Female, Other
+  dateOfBirth  DateTime?
+  birthplace   String?
+  nationality  String?
+  documentType String?  // Passport, ID Card, etc
+  documentNumber String?
+  address      String?
+  city         String?
+  state        String?
+  country      String?
+  postalCode   String?
+  allergies    String?
+  notes        String?
+  specialNeeds  String?
+  avatarUrl String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
   registrations EventRegistration[]
 
   FromPersonRelationship PersonRelationship[] @relation("FromPerson")
@@ -141,11 +161,22 @@ model Person {
   ToPersonRelationship PersonRelationship[] @relation("ToPerson")
 }
 
+
 enum Gender {
   MASCULINO
   FEMENINO
   SIN_ESPECIFICAR
 }
+
+model EventPersonFieldRequirement {
+  id        String   @id @default(cuid())
+  eventId   String
+  fieldName String   // nombre del campo de Person
+  required  Boolean
+
+  event     Event    @relation(fields: [eventId], references: [id])
+}
+
 
 model EventRegistration {
   id         String   @id @default(uuid())
