@@ -118,6 +118,8 @@ model Event {
   permissions      UserEventPermission[]
 
   EventPersonFieldRequirement EventPersonFieldRequirement[]
+
+  EventRequiredField EventRequiredField[]
 }
 
 model ParticipantRole {
@@ -137,7 +139,7 @@ model Person {
   email        String?  @unique
   phone        String?  @unique
   gender       String?  // Male, Female, Other
-  dateOfBirth  DateTime?
+  birthdate  DateTime?
   birthplace   String?
   nationality  String?
   documentType String?  // Passport, ID Card, etc
@@ -161,6 +163,23 @@ model Person {
   ToPersonRelationship PersonRelationship[] @relation("ToPerson")
 }
 
+model EventRequiredField {
+  id          String   @id @default(cuid())
+  eventId     String
+  fieldName   String
+  fieldLabel  String
+  isCustom    Boolean  @default(false) // Si es un campo adicional no existente en Person
+  fieldType   String?  // text, number, date, select, etc. (solo si isCustom es true)
+  options     Json?    // Opciones para campos tipo select, radio, etc.
+  isRequired  Boolean  @default(true) // Si es obligatorio llenarlo
+  createdAt   DateTime @default(now())
+
+  event       Event    @relation(fields: [eventId], references: [id])
+
+  @@unique([eventId, fieldName])
+}
+
+
 
 enum Gender {
   MASCULINO
@@ -178,22 +197,25 @@ model EventPersonFieldRequirement {
 }
 
 
-model EventRegistration {
-  id         String   @id @default(uuid())
-  personId   String
-  eventId    String
-  roleId     String?
+model EventRegistration { 
+  id            String   @id @default(uuid())
+  personId      String
+  eventId       String
+  roleId        String?
 
-  person     Person          @relation(fields: [personId], references: [id])
-  event      Event           @relation(fields: [eventId], references: [id])
-  role       ParticipantRole? @relation(fields: [roleId], references: [id])
+  person        Person           @relation(fields: [personId], references: [id])
+  event         Event            @relation(fields: [eventId], references: [id])
+  role          ParticipantRole? @relation(fields: [roleId], references: [id])
 
-  hasPaid    Boolean  @default(false)
-  amountPaid Float    @default(0)
-  totalCost  Float?
+  hasPaid       Boolean  @default(false)
+  amountPaid    Float    @default(0)
+  totalCost     Float?
 
-  createdAt  DateTime @default(now())
+  additionalInfo Json?   // <- nuevo campo para datos personalizados
+  
+  createdAt     DateTime @default(now())
 }
+
 
 model UserEventPermission {
   id         String   @id @default(uuid())
@@ -233,18 +255,6 @@ model PersonRelationship {
   note           String?
 }
 
-// model OrganizationInvitation {
-//   id              String   @id @default(cuid())
-//   email           String
-//   organizationId  String
-//   role            Role  @default(user)
-//   invitedById     String?   // quién hizo la invitación (opcional)
-//   invitedBy       User?     @relation("InvitationsSent", fields: [invitedById], references: [id])
-//   organization    Organization @relation(fields: [organizationId], references: [id])
-//   createdAt       DateTime @default(now())
-//   acceptedAt      DateTime?
-//   status          InvitationStatus @default(PENDING)
-// }
 
 model OrganizationInvitation {
   id              String   @id @default(uuid())

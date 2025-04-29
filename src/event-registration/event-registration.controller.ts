@@ -21,7 +21,10 @@ import {
     constructor(private readonly eventRegistrationService: EventRegistrationService) {}
   
     @Post()
-    @ApiOperation({ summary: 'Registrar participante a un evento' })
+    @ApiOperation({
+      summary: 'Registrar participante a un evento',
+      description: 'Se puede registrar pasando un personId existente o bien los datos para crear una nueva persona.',
+    })    
     @ApiResponse({ status: 201, description: 'Registro creado correctamente' })
     create(@Body() dto: CreateEventRegistrationDto) {
       return this.eventRegistrationService.create(dto);

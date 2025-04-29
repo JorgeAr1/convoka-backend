@@ -1,20 +1,42 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsUUID,
-  IsBoolean,
-  IsNumber,
-  IsOptional,
-  Min,
-} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsUUID, IsBoolean, IsNumber, IsOptional, Min, ValidateNested, IsObject, IsString, IsEmail, IsDateString } from 'class-validator';
 
 export class CreateEventRegistrationDto {
-  @ApiProperty({ description: 'ID de la persona que se registra' })
-  @IsUUID()
-  personId: string;
-
   @ApiProperty({ description: 'ID del evento al que se registra' })
   @IsUUID()
   eventId: string;
+
+  @ApiPropertyOptional({ description: 'ID de la persona ya existente' })
+  @IsUUID()
+  @IsOptional()
+  personId?: string;
+
+  // Datos para crear una nueva persona si no existe
+  @ApiPropertyOptional({ description: 'Nombre de la persona' })
+  @IsString()
+  @IsOptional()
+  firstName?: string;
+
+  @ApiPropertyOptional({ description: 'Apellido de la persona' })
+  @IsString()
+  @IsOptional()
+  lastName?: string;
+
+  @ApiPropertyOptional({ description: 'Correo electrónico de la persona' })
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @ApiPropertyOptional({ description: 'Teléfono de la persona' })
+  @IsString()
+  @IsOptional()
+  phone?: string;
+
+  @ApiPropertyOptional({ description: 'Fecha de nacimiento de la persona' })
+  @IsOptional()
+  @IsDateString()
+  birthDate?: string;
 
   @ApiPropertyOptional({ description: 'ID del rol del participante (opcional)' })
   @IsUUID()
@@ -37,4 +59,9 @@ export class CreateEventRegistrationDto {
   @Min(0)
   @IsOptional()
   totalCost?: number;
+
+  @ApiPropertyOptional({ description: 'Información adicional personalizada para este registro de evento', type: Object })
+  @IsOptional()
+  @IsObject()
+  additionalInfo?: Record<string, any>;
 }
