@@ -249,11 +249,15 @@ enum RolePermission {
 }
 
 model RelationshipKind {
-  id   String  @id @default(uuid())
-  name String  @unique
-  description String?
+  id                String   @id @default(uuid())
+  name              String   @unique
+  description       String?
+  inverseKindId     String?  // 🔁 Referencia al tipo inverso
 
-  relationships PersonRelationship[]
+  inverseKind       RelationshipKind? @relation("InverseKind", fields: [inverseKindId], references: [id])
+  inverseOf         RelationshipKind[] @relation("InverseKind")
+
+  relationships     PersonRelationship[]
 
   EventRequiredRelationship EventRequiredRelationship[]
 }
