@@ -9,6 +9,7 @@ import { OrganizationModule } from './organization/organization.module';
 import { InvitationModule } from './invitation/invitation.module';
 import { EventModule }  from './event/event.module';
 import { EventRegistrationModule } from './event-registration/event-registration.module';
+import { EventRequiredRelationshipModule } from './event-required-relationship/event-required-relationship.module';
 import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     OrganizationModule,
     InvitationModule,
     EventModule,
-    EventRegistrationModule
+    EventRegistrationModule,
+    EventRequiredRelationshipModule
   ],
   controllers: [AppController],
   providers: [AppService],
