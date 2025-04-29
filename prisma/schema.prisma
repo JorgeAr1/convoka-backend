@@ -120,6 +120,8 @@ model Event {
   EventPersonFieldRequirement EventPersonFieldRequirement[]
 
   EventRequiredField EventRequiredField[]
+
+  EventRequiredRelationship EventRequiredRelationship[]
 }
 
 model ParticipantRole {
@@ -179,6 +181,19 @@ model EventRequiredField {
   @@unique([eventId, fieldName])
 }
 
+model EventRequiredRelationship {
+  id               String   @id @default(uuid())
+  eventId          String
+  requiredKindId   String
+  appliesToMinors  Boolean  @default(true)
+  appliesToAll     Boolean  @default(false)
+  requiredCount    Int      @default(1)
+
+  event            Event             @relation(fields: [eventId], references: [id])
+  relationshipKind RelationshipKind @relation(fields: [requiredKindId], references: [id])
+
+  @@unique([eventId, requiredKindId])
+}
 
 
 enum Gender {
@@ -239,6 +254,8 @@ model RelationshipKind {
   description String?
 
   relationships PersonRelationship[]
+
+  EventRequiredRelationship EventRequiredRelationship[]
 }
 
 model PersonRelationship {
