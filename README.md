@@ -92,6 +92,21 @@ Una vez en ejecución, accede a:
 
 ---
 
+## 🚀 Características principales (Versión Alpha)
+
+- **Autenticación JWT** con control de roles
+- **Gestión de organizaciones** y usuarios con diferentes roles por organización
+- **Módulo de invitaciones** por correo electrónico, con verificación automática y expiración
+- **Creación y gestión de eventos** con ubicaciones dinámicas
+- **Registro de asistentes** con posibilidad de crear personas nuevas o seleccionar existentes
+- **Soporte para información adicional dinámica por evento**
+- **Relaciones familiares** entre personas (padres, tutores, etc.)
+- **Restricciones por evento** (ej. menores deben tener un tutor)
+- **Validaciones de relaciones requeridas antes del registro**
+- **Módulo cron para invalidar invitaciones vencidas**
+
+---
+
 ## 📈 Planes
 
 Convoka está diseñado para escalar con distintos planes:
