@@ -1,7 +1,21 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateEventRegistrationDto } from './dto/create-event-registration.dto';
 import { UpdateEventRegistrationDto } from './dto/update-event-registration.dto';
+
+function calculateAge(birthDate: Date): number {
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
 
 @Injectable()
 export class EventRegistrationService {
@@ -10,8 +24,8 @@ export class EventRegistrationService {
   async create(dto: CreateEventRegistrationDto) {
     let personId = dto.personId;
 
+    // Buscar o crear persona principal
     if (!personId) {
-      // Buscar persona por email o teléfono
       const existingPerson = await this.prisma.person.findFirst({
         where: {
           OR: [
@@ -24,15 +38,14 @@ export class EventRegistrationService {
       if (existingPerson) {
         personId = existingPerson.id;
       } else {
-        // Crear persona nueva
         const newPerson = await this.prisma.person.create({
           data: {
             firstName: dto.firstName,
             lastName: dto.lastName,
             email: dto.email?.toLowerCase(),
             phone: dto.phone,
-            gender: undefined,
-            birthdate: dto.birthDate ? new Date(dto.birthDate) : new Date('2000-01-01'), // Valor predeterminado
+            gender: dto.gender,
+            birthdate: dto.birthDate ? new Date(dto.birthDate) : new Date('2000-01-01'),
           },
         });
         personId = newPerson.id;
@@ -43,6 +56,75 @@ export class EventRegistrationService {
       throw new BadRequestException('Debe especificar un ID de persona o información para crearla');
     }
 
+    // Crear personas relacionadas si se incluyeron
+    if (dto.relatedPersons?.length > 0) {
+      for (const rel of dto.relatedPersons) {
+        let relatedPersonId = rel.relatedPersonId;
+
+        if (!relatedPersonId) {
+          const created = await this.prisma.person.create({
+            data: {
+              firstName: rel.firstName!,
+              lastName: rel.lastName!,
+              birthdate: rel.birthDate!,
+              email: rel.email?.toLowerCase(),
+              phone: rel.phone,
+              gender: rel.gender,
+            },
+          });
+          relatedPersonId = created.id;
+        }
+
+        await this.prisma.personRelationship.create({
+          data: {
+            fromPersonId: personId,
+            toPersonId: relatedPersonId,
+            relationshipKindId: rel.relationshipKindId,
+            note: rel.note,
+          },
+        });
+      }
+    }
+
+    // Validación: si es menor de edad y se requieren relaciones familiares
+    const person = await this.prisma.person.findUnique({
+      where: { id: personId },
+    });
+
+    if (!person) {
+      throw new NotFoundException('La persona no fue encontrada');
+    }
+
+    const age = calculateAge(person.birthdate);
+    if (age < 18) {
+      const requiredRelationships = await this.prisma.eventRequiredRelationship.findMany({
+        where: {
+          eventId: dto.eventId,
+          appliesToMinors: true,
+        },
+      });
+
+      for (const requirement of requiredRelationships) {
+        const hasRelation = await this.prisma.personRelationship.findFirst({
+          where: {
+            fromPersonId: personId,
+            relationshipKindId: requirement.requiredKindId,
+          },
+        });
+
+        if (!hasRelation) {
+          const kind = await this.prisma.relationshipKind.findUnique({
+            where: { id: requirement.requiredKindId },
+          });
+
+          throw new BadRequestException(
+            `Este evento requiere al menos una relación del tipo "${kind?.name}" para personas menores de edad.`
+          );
+        }
+      }
+    }
+
+    // Crear registro en el evento
     return this.prisma.eventRegistration.create({
       data: {
         eventId: dto.eventId,

@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsUUID, IsBoolean, IsNumber, IsOptional, Min, ValidateNested, IsObject, IsString, IsEmail, IsDateString } from 'class-validator';
+import { CreateRelatedPersonDto } from './create-related-person.dto';
 
 export class CreateEventRegistrationDto {
   @ApiProperty({ description: 'ID del evento al que se registra' })
@@ -38,6 +39,10 @@ export class CreateEventRegistrationDto {
   @IsDateString()
   birthDate?: string;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  gender?: 'MASCULINO' | 'FEMENINO' | 'SIN_ESPECIFICAR';
+
   @ApiPropertyOptional({ description: 'ID del rol del participante (opcional)' })
   @IsUUID()
   @IsOptional()
@@ -64,4 +69,9 @@ export class CreateEventRegistrationDto {
   @IsOptional()
   @IsObject()
   additionalInfo?: Record<string, any>;
+
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CreateRelatedPersonDto)
+  relatedPersons?: CreateRelatedPersonDto[];
 }
