@@ -66,7 +66,7 @@ export class EventRegistrationService {
             data: {
               firstName: rel.firstName!,
               lastName: rel.lastName!,
-              birthdate: rel.birthDate!,
+              birthdate: new Date(rel.birthDate!),
               email: rel.email?.toLowerCase(),
               phone: rel.phone,
               gender: rel.gender,
