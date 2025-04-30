@@ -134,7 +134,7 @@ model ParticipantRole {
 }
 
 model Person {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   firstName    String
   lastName     String?
   middleName   String?
@@ -166,7 +166,7 @@ model Person {
 }
 
 model EventRequiredField {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   eventId     String
   fieldName   String
   fieldLabel  String
@@ -203,7 +203,7 @@ enum Gender {
 }
 
 model EventPersonFieldRequirement {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   eventId   String
   fieldName String   // nombre del campo de Person
   required  Boolean

@@ -1,7 +1,9 @@
 import { Body, Controller, Param, Post, Get } from '@nestjs/common';
 import { EventRequiredFieldService } from '../services/event-required-field.service';
 import { CreateEventRequiredFieldDto } from '../dto/create-event-required-field.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Event Required Fields')
 @Controller('events/:eventId/required-fields')
 export class EventRequiredFieldController {
   constructor(private readonly service: EventRequiredFieldService) {}

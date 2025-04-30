@@ -11,8 +11,15 @@ export class OrganizationService {
     const organization = await this.prisma.organization.create({
       data: {
         name: dto.name,
+        Users: {
+          create: {
+            userId,
+            role: 'admin', // o el enum correspondiente
+          },
+        },
       },
     });
+    
     return organization;
   }
 
