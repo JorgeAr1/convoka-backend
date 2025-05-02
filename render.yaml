@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: convoka-api-qa
+    runtime: node
+    repo: https://github.com/TU_USUARIO/TU_REPO
+    branch: main
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        value: 
+      - key: NODE_ENV
+        value: production
