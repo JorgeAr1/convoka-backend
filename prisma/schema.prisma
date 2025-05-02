@@ -79,6 +79,8 @@ model User {
   organizations   UserOrganization[]
 
   OrganizationInvitation OrganizationInvitation[] @relation("InvitationsSent")
+
+  EventPayment EventPayment[]
 }
 
 model UserOrganization {
@@ -229,6 +231,8 @@ model EventRegistration {
   additionalInfo Json?   // <- nuevo campo para datos personalizados
   
   createdAt     DateTime @default(now())
+
+  EventPayment EventPayment[]
 }
 
 
@@ -301,3 +305,25 @@ enum InvitationStatus {
   EXPIRED
   REVOKED
 }
+
+model EventPayment {
+  id                  String   @id @default(uuid())
+  eventRegistrationId String
+  registeredById      String
+  amount              Float
+  paymentMethod       PaymentMethod
+  note                String?
+  createdAt           DateTime @default(now())
+
+  eventRegistration   EventRegistration @relation(fields: [eventRegistrationId], references: [id])
+  registeredBy        User              @relation(fields: [registeredById], references: [id])
+}
+
+enum PaymentMethod {
+  EFECTIVO
+  TRANSFERENCIA
+  TARJETA
+  OTRO
+}
+
+

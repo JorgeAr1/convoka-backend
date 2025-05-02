@@ -13,6 +13,7 @@ import { EventRequiredRelationshipModule } from './event-required-relationship/e
 import { RelationshipKindModule } from './relationship-kind/relationship-kind.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PersonRelationshipModule } from './person-relationship/person-relationship.module';
+import { EventPaymentModule } from './event-payment/event-payment.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -26,7 +27,8 @@ import { PersonRelationshipModule } from './person-relationship/person-relations
     EventRegistrationModule,
     EventRequiredRelationshipModule,
     RelationshipKindModule,
-    PersonRelationshipModule
+    PersonRelationshipModule,
+    EventPaymentModule
   ],
   controllers: [AppController],
   providers: [AppService],
