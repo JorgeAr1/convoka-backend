@@ -78,13 +78,6 @@ export class AuthService {
           },
         });
 
-        await this.prisma.userOrganization.create({
-          data: {
-            userId: newuser.id,
-            organizationId: invitation.organizationId,
-            role: invitation.role, // <-- Asegúrate de que esto venga bien desde la invitación
-          },
-        });
         console.log(`Invitation accepted for user ${newuser.id} and organization ${invitation.organizationId}`);
       }
       
@@ -101,7 +94,7 @@ export class AuthService {
         throw new BadRequestException('User already exists');
       }
       this.logger.error(`POST: auth/register: error: ${error}`);
-      throw new InternalServerErrorException('Server error');
+      throw new InternalServerErrorException(error.message || 'Server error');
     }
 
   }
